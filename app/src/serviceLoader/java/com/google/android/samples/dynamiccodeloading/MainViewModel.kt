@@ -19,7 +19,6 @@ package com.google.android.samples.dynamiccodeloading
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import java.util.*
 
 /**
  * An implementation of our ViewModel that uses ServiceLoader.
@@ -58,16 +57,8 @@ class MainViewModel(app: Application) : AbstractMainViewModel(app) {
             override fun getLogger(): Logger = MainLogger
         }
 
-        // Ask ServiceLoader for concrete implementations of StorageFeature.Provider
-        // Explicitly use the 2-argument version of load to enable R8 optimization.
-        val serviceLoader = ServiceLoader.load(
-            StorageFeature.Provider::class.java,
-            StorageFeature.Provider::class.java.classLoader
-        )
+        storageModule = dependencies.storageFeature()
 
-        // Explicitly ONLY use the .iterator() method on the returned ServiceLoader to enable R8 optimization.
-        // When these two conditions are met, R8 replaces ServiceLoader calls with direct object instantiation.
-        storageModule = serviceLoader.iterator().next().get(dependencies)
         Log.d(TAG, "Loaded storage feature through ServiceLoader")
     }
 }

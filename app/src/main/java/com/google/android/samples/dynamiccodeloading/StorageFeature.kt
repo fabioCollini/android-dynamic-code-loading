@@ -17,6 +17,9 @@
 package com.google.android.samples.dynamiccodeloading
 
 import android.content.Context
+import inversion.Inversion
+import inversion.InversionDef
+import inversion.of
 
 /**
  * This is the interface that needs
@@ -30,14 +33,6 @@ interface StorageFeature {
     fun loadCounter(): Int
 
     /**
-     * StorageFeature can be instantiated in whatever way the implementer chooses,
-     * we just want to have a simple method to get() an instance of it.
-     */
-    interface Provider {
-        fun get(dependencies: Dependencies): StorageFeature
-    }
-
-    /**
      * Dependencies from the main app module that are required by the StorageFeature.
      */
     interface Dependencies {
@@ -46,3 +41,5 @@ interface StorageFeature {
     }
 }
 
+@get:InversionDef
+val StorageFeature.Dependencies.storageFeature by Inversion.of(StorageFeature::class)

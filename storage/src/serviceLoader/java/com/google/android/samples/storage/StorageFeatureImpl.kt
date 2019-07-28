@@ -20,6 +20,7 @@ import android.content.Context
 import android.preference.PreferenceManager
 import com.google.android.samples.dynamiccodeloading.Logger
 import com.google.android.samples.dynamiccodeloading.StorageFeature
+import inversion.InversionProvider
 
 const val PREF_COUNTER = "COUNTER"
 
@@ -38,15 +39,5 @@ class StorageFeatureImpl(context: Context, private val logger: Logger) : Storage
     }
 }
 
-/**
- * The provider class. It cannot be a singleton like in the 2 other flavors,
- * as it has to be instantiable through a default constructor
- * to satisfy ServiceLoader requirements.
- *
- * It is accessed from the base app ViewModel through ServiceLoader.load().
- */
-class StorageFeatureProviderImpl : StorageFeature.Provider {
-    override fun get(dependencies: StorageFeature.Dependencies): StorageFeature {
-        return StorageFeatureImpl(dependencies.getContext(), dependencies.getLogger())
-    }
-}
+@InversionProvider
+fun StorageFeature.Dependencies.provideImpl(): StorageFeature = StorageFeatureImpl(getContext(), getLogger())
